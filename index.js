@@ -17,7 +17,6 @@ console.log("PORT",PORT);
 const FRONTENDURL = process.env.FRONTEND_URL
 
 console.log(FRONTENDURL, "o");
-//testing git log
 const corsOptions = {
     origin: [FRONTENDURL]
 };
