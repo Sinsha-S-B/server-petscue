@@ -6,11 +6,10 @@ import bcrypt from "bcrypt"
 
 
 export const expertSignup = async (req, res) => {
+  const {name, email, phone,experience,image,certificate,password, confirmPassword}=req.body
+  console.log(req.body);
   try {
-    console.log("register");
-    let { name, email, phone, password } = req.body;
-
-    // const salt = await bcrypt.genSalt(10);
+   
     const hashPassword = await bcrypt.hash(password.trim(), 10);
 
     const expertExsist=await expertModel.findOne({email:email})

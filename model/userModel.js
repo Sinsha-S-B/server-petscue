@@ -25,6 +25,10 @@ const userSchema = mongoose.Schema({
   },
   profileImage :{
     type : String,
+  },
+  isBlocked:{
+    type:Boolean,
+    default:false,
   }
 });
 

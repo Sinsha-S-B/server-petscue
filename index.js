@@ -16,7 +16,6 @@ const PORT = process.env.PORT
 console.log("PORT",PORT);
 const FRONTENDURL = process.env.FRONTEND_URL
 
-console.log(FRONTENDURL, "o");
 const corsOptions = {
     origin: [FRONTENDURL]
 };

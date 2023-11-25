@@ -12,12 +12,12 @@ const rescueSchema = mongoose.Schema({
   district: {
     type: String,
   },
-  address:{
-    type:String,
-  },
   currentLocation:{
     type:Object
     
+  },
+  Address:{
+    type:String,
   },
   date: {
     type: String,

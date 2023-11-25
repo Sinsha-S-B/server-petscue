@@ -37,63 +37,37 @@ export const signup = async (req, res) => {
 
 //-------------------login----------------------
 
-// export const login = async (req, res) => {
-//   const { emails, password } = req.body;
 
-//   try {
-//     const result = await userModel.findOne({ email: emails });
-
-//     console.log({result});
-//     if (result === null) {
-
-//       res.status(403).json({ errmsg: "arjun not founddddddd" });
-//       return; // Return early to exit the function
-//     }
-
-//     bcrypt.compare(password, result.password, ( err,isMatch) => {
-
-//       if (err) {
-//         console.log("Error comparing passwords:", err);
-
-//       } else if (isMatch) {
-//         const { _id, name } = JSON.parse(JSON.stringify(result));
-//         console.log({_id});
-
-//         const token = generateAccessToken(_id, name, "user");
-
-//         res.status(200).json({ success: "login success", result, token });
-
-//       } else {
-//         res.status(403).json({ errmsg: "invalid password"  });
-//       }
-//     });
-
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ errmsg: "server error" });
-//   }
-// };
 
 export const login = async (req, res) => {
-  const { emails, password } = req.body;
-  console.log(req.body, password);
+  const { emails, password} = req.body;
+  console.log(req.body);
 
   try {
     const result = await userModel.findOne({ email: emails });
 
+    console.log({result});
+ 
+
     if (result) {
-      bcrypt.compare(password, result?.password, async (err, isMatch) => {
+      if(result.isBlocked===false){
+         bcrypt.compare(password, result?.password, async (err, isMatch) => {
         if (err) {
           res.status(500).json({ errmsg: "Server error" });
         } else if (isMatch) {
-          const { _id, name, role } = result; // No need to parse to JSON
-          const token = generateAccessToken(_id, name, role);
+          const { _id, name} = result; // No need to parse to JSON
+          
+          const token = generateAccessToken(_id, name, "User");
 
-          res.status(200).json({ success: "Login success", result, token });
+          res.status(200).json({ success: "Login success", result, token,role:"User" });
         } else {
           res.status(403).json({ errmsg: "Invalid password" });
         }
       });
+      }else{
+        res.json({ errmsg: "User is blocked" })
+      }
+     
     } else {
       res.status(404).json({ errmsg: "Email not found" });
     }
@@ -103,11 +77,74 @@ export const login = async (req, res) => {
   }
 };
 
+//--------------------------google login------------------------------------
+
+export const googleLogin = async (req, res) => {
+  try {
+    let { profile } = req.body;
+    const email = profile?.email;
+    const name = profile?.name;
+    const profileImage = profile?.picture;
+    const user = await userModel.findOne({ email: email });
+    if (!user) {
+      const newUser = await userModel.create({
+        email,
+        name,
+        profileImage,
+        isVerified: true,
+      });
+      const token = generateAccessToken(newUser._id, "user");
+      res.status(200).json({
+        message: "User login successfully",
+        name: newUser.name,
+        userId: newUser._id,
+        token,
+        role: "user",
+      });
+    } else if (user.isBlocked) {
+      res.status(403).json({ errmsg: "user is blocked by admin" });
+    } else {
+      if (!user.isVerified) {
+        if (!user.profileImage) {
+          await userModel.updateOne({ email }, { $set: { profileImage, isVerified: true } });
+        } else {
+          await userModel.updateOne({ _id: user._id }, { $set: { isVerified: true } });
+        }
+        const token = generateToken(user._id, "user");
+        // console.log({token})
+
+        
+        res.status(200).json({
+          message: "user login successfully",
+          name: user.name,
+          token,
+          userId: user._id,
+          role: "user",
+        });
+      } else {
+        if (!user.profileImage) {
+          await userModel.updateOne({ email }, { $set: { profileImage } });
+        }
+        const token = generateToken(user._id, "user");
+        res.status(200).json({
+          message: "user login successfully",
+          name: user.name,
+          token,
+          userId: user._id,
+          role: "user",
+        });
+      }
+
+    }
+  } catch (err) { }
+};
+
+
 //----------------otp verification-----------------------
 
 export const createOtp = async (req, res) => {
   const { email } = req.body;
-  console.log(email);
+ 
 
   try {
     const OTP = otpSend(email);
@@ -142,7 +179,7 @@ export const findOtp = async (req, res) => {
 
 export const storeImage = async (req, res) => {
   const { userId, image } = req.body;
-  console.log(req.body, "heloooooooooooooooooooooooooo");
+  // console.log(req.body, "heloooooooooooooooooooooooooo");
   try {
     const profileImage = await userModel.updateOne(
       {
@@ -168,6 +205,40 @@ export const FindById = async (req, res) => {
     res.status(500).json({ Message: "Internal server Error" });
   }
 };
+
+export const editUser=async(req,res)=>{
+  const {userId,newName,newPhone}=req.body
+  console.log({newName});
+  try {
+    const editUser=await userModel.updateMany(
+      {
+        _id: userId,
+      },
+      { $set:{name:newName,phone:newPhone}}
+      
+      )
+
+    console.log(editUser);
+    if(editUser){
+
+      res.status(200).json({ sucess: "Updated succesfully", editUser });
+    }else{
+      res.status(401).json({ Message: "Cant edit" });
+
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ Message: "Internal server Error" });
+    
+  }
+}
+
+
+
+
+
+
 
 //-----------forgot password-----------
 
@@ -226,3 +297,4 @@ export const resetpassword = async (req, res) => {
     console.log(error);
   }
 };
+
