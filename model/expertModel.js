@@ -13,6 +13,15 @@ const expertSchema = mongoose.Schema({
   phone: {
     type: Number,
   },
+  experience: {
+    type: String,
+  },
+  image :{
+    type : String,
+  },
+  certificate :{
+    type : String,
+  },
   password: {
     type: String,
   },
@@ -22,9 +31,6 @@ const expertSchema = mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
-  },
-  certificate :{
-    type : String,
   }
 });
 const Expert = mongoose.model("Expert", expertSchema);

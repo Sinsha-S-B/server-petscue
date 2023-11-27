@@ -6,8 +6,8 @@ import bcrypt from "bcrypt"
 
 
 export const expertSignup = async (req, res) => {
-  const {name, email, phone,experience,image,certificate,password, confirmPassword}=req.body
-  console.log(req.body);
+  const {name, email, phone,experience,image,certificate,password}=req.body
+  console.log("req",req.body);
   try {
    
     const hashPassword = await bcrypt.hash(password.trim(), 10);
@@ -22,9 +22,12 @@ export const expertSignup = async (req, res) => {
         name,
         email,
         phone,
-        password: hashPassword,
+        experience,
+        image,
+        certificate,
+        password: hashPassword
       });
-      console.log(newExpert);
+      console.log({newExpert});
       if (newExpert) {
         res.status(200).json({ message: "Successfully Registered ", newExpert });
       } else {
