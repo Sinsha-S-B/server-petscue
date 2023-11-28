@@ -28,7 +28,10 @@ const expertSchema = mongoose.Schema({
   OTP: {
     type: String,
   },
-  isVerified: {
+  adminVerified: {
+    type: Boolean,
+    default: false,
+  },emailVerified: {
     type: Boolean,
     default: false,
   }

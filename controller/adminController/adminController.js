@@ -1,6 +1,7 @@
 import adminModel from "../../model/adminModel.js"
 import { generateAccessToken } from "../../config/jwt.js";
 import userModel from "../../model/userModel.js"
+import expertModel from '../../model/expertModel.js'
 
 
 //-----------------login------------
@@ -61,6 +62,37 @@ export const userStatus = async (req,res)=>{
         }else{
             await userModel.updateOne({_id:userId},{$set:{isBlocked:true}})
             return res.status(200).json({message:'Selected user blocked',isblocked:true})
+        }
+    }catch (err){
+        return res.status(500).json({errmsg:'Server error'})
+    }
+  }
+
+  //-------------mapping all expert data-----------------------
+export const fetchAllExperts = async (req, res) => {
+
+    try {
+      const fetchAllExperts = await expertModel.find({});
+      console.log({fetchAllExperts});
+      res.status(200).json({msg: "all expert details got successfully",fetchAllExperts});
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  //---------------allow/denay-expert------------------------
+export const expertStatus = async (req,res)=>{
+    try{
+        const {expertId,adminVerified} = req.body
+        console.log({expertId});
+        console.log({adminVerified});
+
+        if(adminVerified){
+            await expertModel.updateOne({_id:expertId},{$set:{adminVerified:false}})
+            return res.status(200).json({message:'Selected Expert is verified',adminVerified:false})
+        }else{
+            await expertModel.updateOne({_id:expertId},{$set:{adminVerified:true}})
+            return res.status(200).json({message:'Selected Expert is verified',adminVerified:true})
         }
     }catch (err){
         return res.status(500).json({errmsg:'Server error'})

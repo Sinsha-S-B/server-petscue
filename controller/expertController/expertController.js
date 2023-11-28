@@ -1,5 +1,7 @@
 import expertModel from  '../../model/expertModel.js'
 import bcrypt from "bcrypt"
+import { otpSend } from './expertOtpVerification.js';
+import { generateAccessToken } from "../../config/jwt.js";
 
 
 //---------------------signu_up---------------------------
@@ -40,6 +42,42 @@ export const expertSignup = async (req, res) => {
   }
 };
 
+
+//---------------otp verification---------------------
+export const createOtp = async (req, res) => {
+  const { email } = req.body;
+  console.log(req.body);
+ 
+
+  try {
+    const OTP = otpSend(email);
+    const otpString = OTP.toString();
+
+    await expertModel.updateMany(
+      { email: email },
+      { $set: { OTP: otpString, emailVerified: true } }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const findOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const otpMatch = await expertModel.findOne({
+      $and: [{ email: email, OTP: otp }],
+    });
+    if (otpMatch == null) {
+      res.status(200).json({ errmsg: "otp not matched", otpMatch });
+    } else {
+      res.status(200).json({ message: "otp matched", otpMatch });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 //------------------login------------------------------------------------
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -47,20 +85,28 @@ export const login = async (req, res) => {
 
   try {
     const result = await expertModel.findOne({ email: email });
+    console.log({result});
 
     if (result) {
-      bcrypt.compare(password, result?.password, async (err, isMatch) => {
+      if(result.adminVerified==true){
+         bcrypt.compare(password, result?.password, async (err, isMatch) => {
         if (err) {
           res.status(500).json({ errmsg: "Server error" });
         } else if (isMatch) {
           const { _id, name, role } = result; // No need to parse to JSON
-          const token = generateAccessToken(_id, name, role);
+          const token = generateAccessToken(_id, name, "expert");
 
-          res.status(200).json({ success: "Login success", result, token });
+          res.status(200).json({ success: "Login success", result, token,role:"expert" });
         } else {
           res.status(403).json({ errmsg: "Invalid password" });
         }
       });
+      }else{
+        res.status(404).json({ errmsg: "Wait for admin verification" });
+
+      }
+
+     
     } else {
       res.status(404).json({ errmsg: "Email not found" });
     }
