@@ -46,7 +46,7 @@ export const expertSignup = async (req, res) => {
 //---------------otp verification---------------------
 export const createOtp = async (req, res) => {
   const { email } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
  
 
   try {
@@ -81,11 +81,11 @@ export const findOtp = async (req, res) => {
 //------------------login------------------------------------------------
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body, password);
+  // console.log(req.body, password);
 
   try {
     const result = await expertModel.findOne({ email: email });
-    console.log({result});
+    // console.log({result});
 
     if (result) {
       if(result.adminVerified==true){
@@ -116,6 +116,24 @@ export const login = async (req, res) => {
   }
 };
 
+
+//----------------expert profile--------------------
+export const ExpertFindById = async (req, res) => {
+  const expertId= req.params.id
+  console.log(expertId);
+
+  try {
+    const ExpertprofileData = await expertModel.findOne({ _id: expertId });
+    console.log({ExpertprofileData});
+    if (ExpertprofileData) {
+      res.status(200).json({ sucess: "Expert data Founded succesfully", ExpertprofileData });
+    } else {
+      res.status(401).json({ Message: "Expert data Not Fouund" });
+    }
+  } catch (error) {
+    res.status(500).json({ Message: "Internal server Error" });
+  }
+};
 
 
   

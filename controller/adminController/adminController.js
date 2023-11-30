@@ -2,6 +2,7 @@ import adminModel from "../../model/adminModel.js"
 import { generateAccessToken } from "../../config/jwt.js";
 import userModel from "../../model/userModel.js"
 import expertModel from '../../model/expertModel.js'
+import adopterInfo from "../../model/adoptModel.js";
 
 
 //-----------------login------------
@@ -47,6 +48,18 @@ export const fetchAllUsers = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   };
+
+  //-------------mapping all adopter  data-----------------------
+export const fetchAllAdopters = async (req, res) => {
+
+  try {
+    const fetchAllAdopter = await adopterInfo.find({});
+    res.status(200).json({msg: "all adopter details got successfully",fetchAllAdopter});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 //---------------block/unblock-user------------------------
@@ -98,3 +111,5 @@ export const expertStatus = async (req,res)=>{
         return res.status(500).json({errmsg:'Server error'})
     }
   }
+
+  
