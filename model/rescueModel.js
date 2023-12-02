@@ -14,9 +14,9 @@ const rescueSchema = mongoose.Schema({
   },
   currentLocation:{
     type:Object
-    
+  
   },
-  Address:{
+  address:{
     type:String,
   },
   date: {

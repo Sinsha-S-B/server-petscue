@@ -1,25 +1,16 @@
 import petInfo from "../../model/rescueModel.js";
 
 export const rescuerForm = async (req, res) => {
-  let {
-    name,
-    phone,
-    district,
-    currentLocation,
-    Address,
-    health,
-    petCategory,
-    imageUri,
-  } = req.body;
+  let {name,phone,district,currentLocation,address,health,petCategory,imageUri} = req.body;
 
-  
+  console.log("body",req.body);
   try {
     const petDetails = await petInfo.create({
       name,
       phone,
       district,
       currentLocation,
-      Address,
+      address,
       health,
       petCategory,
       imageUri,
