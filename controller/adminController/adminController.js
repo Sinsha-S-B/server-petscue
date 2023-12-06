@@ -3,6 +3,8 @@ import { generateAccessToken } from "../../config/jwt.js";
 import userModel from "../../model/userModel.js"
 import expertModel from '../../model/expertModel.js'
 import adopterInfo from "../../model/adoptModel.js";
+import petInfo from "../../model/rescueModel.js"
+
 
 
 //-----------------login------------
@@ -17,10 +19,10 @@ try {
     const result = await adminModel.findOne({ email: adminEmail });
     // console.log({result},'lllllllllllllllllllllllll')
     if(result){
-        const { _id, name, role } = result; // No need to parse to JSON
+        const { _id, name} = result; // No need to parse to JSON
         const token = generateAccessToken(_id, name, "Admin");
         // console.log({token});
-        res.status(200).json({ success: "login success", result,token });
+        res.status(200).json({ success: "login success", result,token,role:"Admin" });
     } else {
         res.status(403).json({ errmsg: "Invalid password" });
       }
@@ -54,7 +56,9 @@ export const fetchAllAdopters = async (req, res) => {
 
   try {
     const fetchAllAdopter = await adopterInfo.find({});
-    res.status(200).json({msg: "all adopter details got successfully",fetchAllAdopter});
+    const adopterCount = await adopterInfo.countDocuments();
+    console.log({adopterCount});
+    res.status(200).json({msg: "all adopter details got successfully",fetchAllAdopter,adopterCount});
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -111,5 +115,21 @@ export const expertStatus = async (req,res)=>{
         return res.status(500).json({errmsg:'Server error'})
     }
   }
+
+   //-------------mapping all adopter  data-----------------------
+export const fetchAllRescures = async (req, res) => {
+
+  try {
+    // const fetchAllAdopter = await adopterInfo.find({});
+    const rescuerCount = await petInfo.countDocuments();
+    console.log({rescuerCount});
+    res.status(200).json({msg: " rescuer count got successfully",rescuerCount});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 
   
