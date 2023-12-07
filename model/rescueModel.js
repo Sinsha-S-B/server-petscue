@@ -32,8 +32,16 @@ const rescueSchema = mongoose.Schema({
   imageUri :{
     type : Array,
     required : true
-  }
-},{timestamps: true});
+  }, 
+  adopted: {
+    type: Boolean,
+    default: false,
+    
+  },
+  
+},
+
+{timestamps: true});
 
 const petInfo = mongoose.model("petInfo", rescueSchema);
 export default petInfo;

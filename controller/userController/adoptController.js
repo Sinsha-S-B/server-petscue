@@ -8,8 +8,8 @@ import { ObjectId } from "mongoose";
 //     try {
 //         const reg = new RegExp(""+search+"", "i")
 //         console.log(reg);
-      // const totalCount = await petInfo.estimatedDocumentCount({});
-      // const fetchPetDet = await petInfo.find({ petCategory: { $regex: reg } }).skip(start).limit(end);
+// const totalCount = await petInfo.estimatedDocumentCount({});
+// const fetchPetDet = await petInfo.find({ petCategory: { $regex: reg } }).skip(start).limit(end);
 
 //       res
 //         .status(200)
@@ -20,19 +20,22 @@ import { ObjectId } from "mongoose";
 //   };
 
 export const fetchPet = async (req, res) => {
-  const {pageNumber,limit} = req.body;
+  const { pageNumber, limit } = req.body;
 
   try {
-    const skip=(pageNumber-1)*limit
+    const skip = (pageNumber - 1) * limit;
 
-    const fetchPetDet = await petInfo.find({}).skip(skip).limit(limit);
-    const totalCount = await petInfo.estimatedDocumentCount({});
-    
-    console.log({fetchPetDet});
+    const fetchPetDet = await petInfo
+      .find({ adopted: false })
+      .skip(skip)
+      .limit(limit);
+    const totalCount = await petInfo.countDocuments({ adopted: false });
+
+    console.log({ fetchPetDet });
 
     res
       .status(200)
-      .json({ msg: "pet details got successfully", fetchPetDet,totalCount});
+      .json({ msg: "pet details got successfully", fetchPetDet, totalCount });
   } catch (error) {
     console.log(error);
   }
@@ -108,7 +111,13 @@ export const adoptSinglePet = async (req, res) => {
         petId,
         userId,
       });
+      const updatePetInfo = await petInfo.updateOne(
+        { adopted: false }, // filter criteria to match documents where adopted is false
+        { $set: { adopted: true } } // update operation to set adopted to true
+      );
+
       console.log({ adoptSingleData });
+      console.log({ updatePetInfo });
       if (adoptSingleData) {
         res.status(200).json({
           msg: "adopter details  successfully registered",
@@ -127,13 +136,14 @@ export const adoptSinglePet = async (req, res) => {
 //------------pet filter------------
 
 export const filterPets = async (req, res) => {
-  console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
   const { prio } = req.body;
-  console.log({prio});
+  // console.log({prio});
   try {
-    
-    const filteredPets = await petInfo.find({petCategory:prio.priority});
-    console.log({filteredPets});
+    const filteredPets = await petInfo.find({
+      petCategory: prio.priority,
+      adopted: false,
+    });
+    console.log({ filteredPets });
     res.status(200).json({ filteredPets });
   } catch (error) {
     res.json({ msg: "somthing went wrong", error });

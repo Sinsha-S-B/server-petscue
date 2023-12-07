@@ -57,13 +57,50 @@ export const fetchAllAdopters = async (req, res) => {
   try {
     const fetchAllAdopter = await adopterInfo.find({});
     const adopterCount = await adopterInfo.countDocuments();
-    console.log({adopterCount});
-    res.status(200).json({msg: "all adopter details got successfully",fetchAllAdopter,adopterCount});
+    const rescuerCount=await petInfo.countDocuments()
+    // console.log({fetchAllAdopter});
+    res.status(200).json({msg: "all adopter details got successfully",fetchAllAdopter,adopterCount,rescuerCount});
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+ //-------------mapping all adopter  data for chart-----------------------
+ export const Adopterschart = async (req, res) => {
+
+  try {
+    const monthlyPets = await adopterInfo.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: '$createdAt' },
+            month: { $month: '$createdAt' },
+          },
+          pets: { $push: '$$ROOT' },
+          petCount: { $sum: 1 }
+        },
+      },
+      {
+        $sort: { '_id.year': 1, '_id.month': 1 },
+      },
+    ]);
+
+
+
+    // return monthlyPets;
+    console.log(monthlyPets);
+   
+    res.status(200).json({msg: "all Adopterschart details got successfully",monthlyPets});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 
 
 //---------------block/unblock-user------------------------
@@ -116,19 +153,7 @@ export const expertStatus = async (req,res)=>{
     }
   }
 
-   //-------------mapping all adopter  data-----------------------
-export const fetchAllRescures = async (req, res) => {
-
-  try {
-    // const fetchAllAdopter = await adopterInfo.find({});
-    const rescuerCount = await petInfo.countDocuments();
-    console.log({rescuerCount});
-    res.status(200).json({msg: " rescuer count got successfully",rescuerCount});
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+ 
 
 
 

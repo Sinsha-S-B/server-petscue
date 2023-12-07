@@ -31,6 +31,11 @@ const adoptSchema = mongoose.Schema(
       type: String,
       
     },
+    adopted: {
+      type: Boolean,
+      default: true,
+      
+    },
   },
   { timestamps: true }
 );
