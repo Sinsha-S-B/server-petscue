@@ -9,3 +9,4 @@ export const  generateAccessToken = (id,name,role)=>{
    
     return accessToken
 }
+
