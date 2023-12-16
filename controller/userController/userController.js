@@ -144,30 +144,50 @@ export const googleLogin = async (req, res) => {
 
 export const createOtp = async (req, res) => {
   const { email } = req.body;
+  
  
 
   try {
     const OTP = otpSend(email);
     const otpString = OTP.toString();
+    // console.log({otpString});
 
+    // await userModel.updateMany(
+    //   { email: email },
+    //   { $set: { OTP: otpString, isVerified: true } }
+    // );
     await userModel.updateMany(
       { email: email },
-      { $set: { OTP: otpString, isVerified: true } }
+      { $set: { OTP: otpString} }
     );
+
   } catch (error) {
     console.log(error);
   }
 };
 
 export const findOtp = async (req, res) => {
-  const { email, otp } = req.body;
+  console.log('lllllllllllllllll');
+  const { email, otp,second } = req.body;
+
+  console.log(second,'finddddddddddddddddddddddddddddddd');
   try {
+
+    
+
     const otpMatch = await userModel.findOne({
       $and: [{ email: email, OTP: otp }],
     });
-    if (otpMatch == null) {
+    console.log(otpMatch);
+    
+    if (otpMatch !== otp && otpMatch==null) {
       res.status(200).json({ errmsg: "otp not matched", otpMatch });
     } else {
+      
+    await userModel.updateMany(
+      { email: email },
+      { $set: {  isVerified: true } }
+    );
       res.status(200).json({ message: "otp matched", otpMatch });
     }
   } catch (error) {

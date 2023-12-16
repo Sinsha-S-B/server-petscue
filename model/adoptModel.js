@@ -27,7 +27,7 @@ const adoptSchema = mongoose.Schema(
     petId: {
       type: String,
     },
-    UserId: {
+    userId: {
       type: String,
       
     },

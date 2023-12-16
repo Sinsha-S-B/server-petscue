@@ -94,7 +94,7 @@ export const fetchSinglePet = async (req, res) => {
 export const adoptSinglePet = async (req, res) => {
   const { name, email, phone, image, userId, petId } = req.body;
   console.log("hhhhhhhhhhhh", req.body);
-  console.log(userId);
+  console.log({userId},'pppppppppppppppppppppppppppppppppppppppppppppppp');
 
   try {
     const sameId = await adopterInfo.findOne({ petId });
@@ -111,6 +111,9 @@ export const adoptSinglePet = async (req, res) => {
         petId,
         userId,
       });
+      console.log({adoptSingleData},'ooooooooooooooooooooooooooooooo');
+
+
       const updatePetInfo = await petInfo.updateOne(
         { adopted: false }, // filter criteria to match documents where adopted is false
         { $set: { adopted: true } } // update operation to set adopted to true
