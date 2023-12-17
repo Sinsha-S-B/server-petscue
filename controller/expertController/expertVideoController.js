@@ -5,7 +5,7 @@ import expertVideoSchema from "../../model/expertVideoModel.js";
 //----------uploding expert video-------
 export const expertVideoUpload = async (req, res) => {
   const { discription, video, expertId } = req.body;
-  console.log("req", req.body);
+  // console.log("req", req.body);
 
   try {
     const expertVideoExsist = await expertVideoSchema.findOne({ video: video });
@@ -23,7 +23,7 @@ export const expertVideoUpload = async (req, res) => {
       video,
     });
 
-    console.log({ expertVideoUpload });
+    // console.log({ expertVideoUpload });
 
     if (expertVideoUpload) {
       return res.status(200).json({ msg: "Video uploaded", expertVideoUpload });
@@ -39,6 +39,7 @@ export const expertVideoUpload = async (req, res) => {
 //===========fetching expert videos==================
 
 export const fetchExpertVideo = async (req, res) => {
+  console.log("mmmmmmmmmmmmmmmmmmmmm");
   const {expertId} = req.body
   console.log({expertId});
 

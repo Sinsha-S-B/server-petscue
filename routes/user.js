@@ -1,7 +1,7 @@
 // import express, { Router, text } from "express"/
 import { Router } from "express";
 const userRoute=Router()
-import  {signup,login, createOtp, findOtp, storeImage,findEmail,resetpassword, FindById,googleLogin,editUser} from "../controller/userController/userController.js";
+import  {signup,login, createOtp, findOtp, storeImage,findEmail,resetpassword, FindById,googleLogin,editUser, refreshToken} from "../controller/userController/userController.js";
 import {rescuerForm } from '../controller/userController/rescuerController.js'
 import {fetchPet,fetchSinglePet,adoptSinglePet,filterPets} from '../controller/userController/adoptController.js'
 import {fetchAllExperts} from '../controller/userController/trainingController.js'
@@ -25,6 +25,7 @@ userRoute.post('/filterPets',filterPets)
 // userRoute.post('/searchPet',searchPet)
 userRoute.post('/googleLogin',googleLogin)
 userRoute.post('/training',fetchAllExperts)
+userRoute.post('/refreshtoken',refreshToken)
 
 
 

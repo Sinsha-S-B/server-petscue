@@ -1,5 +1,5 @@
 import { json } from "express";
-import { generateAccessToken } from "../../config/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../../config/jwt.js";
 import userModel from "../../model/userModel.js";
 import { otpSend } from "./otpVerification.js";
 import bcrypt from "bcrypt";
@@ -58,8 +58,10 @@ export const login = async (req, res) => {
           const { _id, name} = result; // No need to parse to JSON
           
           const token = generateAccessToken(_id, name, "User");
+          const refreshToken = generateRefreshToken(_id, name, "User");
 
-          res.status(200).json({ success: "Login success", result, token,role:"User" });
+
+          res.status(200).json({ success: "Login success", result,refreshToken, token,role:"User" });
         } else {
           res.status(403).json({ errmsg: "Invalid password" });
         }
@@ -317,4 +319,28 @@ export const resetpassword = async (req, res) => {
     console.log(error);
   }
 };
+
+
+export const refreshToken= (req, res) => {
+  const { refresh_token } = req.body;
+
+  // Verify the refresh token
+  jwt.verify(refresh_token, secretKey, (err, decoded) => {
+      if (err) {
+          return res.status(401).json({ error: 'Invalid refresh token' });
+      }
+
+      // At this point, the refresh token is valid, and you can generate a new access token
+      const newAccessToken = jwt.sign({ user: decoded.user }, secretKey, { expiresIn: '1h' });
+
+      // Send the new access token to the client
+      res.json({ access_token: newAccessToken });
+  });
+}
+
+
+
+
+
+
 
