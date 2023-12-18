@@ -12,6 +12,10 @@ const expertVideoSchema = mongoose.Schema({
   expertId: {
     type: String,
   },
+  isBlocked:{
+    type:Boolean,
+    default:false,
+  }
 });
 const ExpertVideo = mongoose.model("ExpertVideo", expertVideoSchema);
 

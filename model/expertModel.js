@@ -34,6 +34,10 @@ const expertSchema = mongoose.Schema({
   },emailVerified: {
     type: Boolean,
     default: false,
+  },
+  isBlocked:{
+    type:Boolean,
+    default:false,
   }
 });
 const Expert = mongoose.model("Expert", expertSchema);
