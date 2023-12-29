@@ -1,7 +1,7 @@
 import express, { Router, text } from "express"
 
 const adminRoute=express.Router()
-import { adminLogin ,fetchAllUsers,userStatus,fetchAllExperts,expertStatus,fetchAllAdopters,Adopterschart,fetchAllApprovedExperts,fetchAllTrainingVideos, expertBlock} from "../controller/adminController/adminController.js"
+import { adminLogin ,fetchAllUsers,userStatus,expert,fetchAllExperts,expertStatus,fetchAllAdopters,Adopterschart,fetchAllApprovedExperts,fetchAllTrainingVideos, expertBlock} from "../controller/adminController/adminController.js"
 
 adminRoute.post('/login',adminLogin)
 adminRoute.post('/userdetails',fetchAllUsers)
@@ -10,6 +10,7 @@ adminRoute.post('/expertdetails',fetchAllExperts)
 adminRoute.post('/approvedexperts',fetchAllApprovedExperts)
 adminRoute.post('/trainingvideos',fetchAllTrainingVideos)
 adminRoute.post('/expertblock',expertBlock)
+adminRoute.post('/singleExpert',expert)
 adminRoute.patch('/expertstatus',expertStatus)
 
 adminRoute.post('/totalcounts',fetchAllAdopters)

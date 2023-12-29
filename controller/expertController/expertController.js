@@ -88,7 +88,7 @@ export const login = async (req, res) => {
     // console.log({result});
 
     if (result) {
-      if(result.adminVerified==true){
+      if(result.adminVerified==true && result.isBlocked==false){
          bcrypt.compare(password, result?.password, async (err, isMatch) => {
         if (err) {
           res.status(500).json({ errmsg: "Server error" });
@@ -101,8 +101,14 @@ export const login = async (req, res) => {
           res.status(403).json({ errmsg: "Invalid password" });
         }
       });
-      }else{
-        res.status(404).json({ errmsg: "Wait for admin verification" });
+      }
+      else{
+        if(result.isBlocked==true){
+          res.status(404).json({ errmsg: "You are bloked by admin" });
+        }else{
+          res.status(404).json({ errmsg: "Wait for admin verification" });
+        }
+       
 
       }
 

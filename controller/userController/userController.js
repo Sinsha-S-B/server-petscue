@@ -151,8 +151,9 @@ export const createOtp = async (req, res) => {
 
   try {
     const OTP = otpSend(email);
+    
     const otpString = OTP.toString();
-    // console.log({otpString});
+    console.log({otpString},'ssssssssssssssssssssssss');
 
     // await userModel.updateMany(
     //   { email: email },

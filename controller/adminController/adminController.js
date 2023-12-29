@@ -14,7 +14,10 @@ export const adminLogin = async (req, res) => {
 
   try {
     const result = await adminModel.findOne({ email: adminEmail });
+    const password = await adminModel.findOne({ password: adminPassword });
+    console.log({result});
     // console.log({result},'lllllllllllllllllllllllll')
+    
     if (result) {
       const { _id, name } = result; // No need to parse to JSON
       const token = generateAccessToken(_id, name, "Admin");
@@ -234,6 +237,22 @@ export const expertBlock = async (req, res) => {
         .status(200)
         .json({ message: "Selected user blocked", isblocked: true });
     }
+  } catch (err) {
+    return res.status(500).json({ errmsg: "Server error" });
+  }
+};
+
+export const expert = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const findBlocked = await expertModel.find({ _id: id });
+    console.log({ findBlocked });
+    const isBlocked = findBlocked[0].isBlocked;
+    console.log({ isBlocked });
+
+    return res.json({findBlocked})
+
+    
   } catch (err) {
     return res.status(500).json({ errmsg: "Server error" });
   }
