@@ -1,37 +1,36 @@
 import express from "express";
-import morgan from "morgan";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
+const app=express();
+import morgan from "morgan"
+app.use(morgan("dev"));
+import cors from "cors"
+import cookieParser from "cookie-parser"
+import dotenv from "dotenv"
+dotenv.config()
 import connectDB from "./config/dbConnection.js";
 import userRoute from "./routes/user.js";
 import adminRoute from "./routes/admin.js";
 import expertRoute from "./routes/expert.js";
 
-const app = express();
-app.use(morgan("dev"));
 
-dotenv.config();
-const PORT = process.env.PORT;
-const FRONTENDURL = process.env.FRONTEND_URL;
+const PORT = process.env.PORT
+console.log("PORT",PORT);
+const FRONTENDURL = process.env.FRONTEND_URL
 
 const corsOptions = {
-  origin: [FRONTENDURL],
+    origin: [FRONTENDURL]
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(cookieParser());
+app.use(express.json())
 
-// Handle preflight requests
-app.options("*", cors(corsOptions));
+app.use('/user',userRoute)
+app.use('/admin',adminRoute)
+app.use('/expert',expertRoute)
 
-app.use("/user", userRoute);
-app.use("/admin", adminRoute);
-app.use("/expert", expertRoute);
+connectDB()
 
-connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
+
+app.listen(PORT,()=>{
+    console.log(`server is running on ${PORT}`);
+})
