@@ -82,6 +82,7 @@ export const login = async (req, res) => {
 //--------------------------google login------------------------------------
 
 export const googleLogin = async (req, res) => {
+  console.log('oooooooooooooooooooooooooo');
   try {
     let { profile } = req.body;
     const email = profile?.email;
@@ -106,17 +107,21 @@ export const googleLogin = async (req, res) => {
     } else if (user.isBlocked) {
       res.status(403).json({ errmsg: "user is blocked by admin" });
     } else {
+      console.log('elseeeeeeeeeeeeeeeeeeeeeeee');
       if (!user.isVerified) {
         if (!user.profileImage) {
           await userModel.updateOne({ email }, { $set: { profileImage, isVerified: true } });
         } else {
           await userModel.updateOne({ _id: user._id }, { $set: { isVerified: true } });
         }
-        const token = generateToken(user._id, "user");
+        console.log('ttttttttttttttttttttttttt');
+        let userid=user._id.toString()
+        const token = generateAccessToken(userid,user.name, "user");
         // console.log({token})
 
         
         res.status(200).json({
+
           message: "user login successfully",
           name: user.name,
           token,
@@ -124,15 +129,23 @@ export const googleLogin = async (req, res) => {
           role: "user",
         });
       } else {
+
+        
         if (!user.profileImage) {
           await userModel.updateOne({ email }, { $set: { profileImage } });
+          console.log('wwwwwwwwwwwwwwwwwwwww');
+
         }
-        const token = generateToken(user._id, "user");
+        console.log('1111111111111111111111111',user._id.toString());
+        let userid=user._id.toString()
+        console.log(user,userid,'idddddddddddddddddddd');
+        const token = generateAccessToken(userid,user.name, "user");
+        console.log('22222222222222222222222');
         res.status(200).json({
           message: "user login successfully",
           name: user.name,
           token,
-          userId: user._id,
+          userId: userid,
           role: "user",
         });
       }

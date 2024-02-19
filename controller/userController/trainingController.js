@@ -14,5 +14,4 @@ export const fetchAllExperts=async (req,res)=>{
     } catch (error) {
         res.json({msg:"catch error",error})
     }
-    
     }
